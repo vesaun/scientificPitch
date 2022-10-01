@@ -1,0 +1,77 @@
+//CSCI 1300 - Fall 2022
+//Author : Vesaun Shrestha
+//Recitation 106 - Chanheum Park
+//Project 1 - Problem 2
+
+#include <iostream>
+#include <string>
+#include <cassert>
+
+using namespace std;
+
+bool isValidNote (string note) //bool int char
+{
+    if (note.length() != 2)
+    {
+        return false;
+    }
+
+    if (note[0] != 'A' && note[0] != 'B' && note[0] != 'C' && note[0] != 'D' && note[0] != 'E' && note[0] != 'F' &&note[0] != 'G')
+    {
+        return false;
+    }
+    else if (int(note[1]) <= 0 && int(note[1]) > 9)
+    {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+/**
+ * @brief iterate through the input for every other character and use the Validnote 
+ * to make sure each substring at that point is a valid note and we check for all notes since 
+ * we use i += 2 and validNote()
+ * 
+ * @param input 
+ * @return true 
+ * @return false 
+ */
+//function of return type boolean with parameter input of type string
+bool tuneValid(string input) 
+{
+    //since using a for loop, I want to create a variable to store the condition of the 
+    //input, since if I used return true right away it would cause error
+    bool result;
+    //int dist is used to set the length of the substring I will be checking for each iteration
+    int dist = 2;
+    //iterate over the input, checking every other spot to start the isValidNote function
+    for (int i = 0; i < input.length(); i += 2)
+    {
+        //check if the spot we are checking is a valid note
+        if (isValidNote(input.substr(i, dist)))
+        {
+            //if it is, then keep bool result as true
+            result = true;
+        }
+        else {
+            //but if it isnt, set result to false and immediately return false as there is no
+            //possible way for it to be true at the point
+            result = false;
+            return false;
+        }
+    }
+
+    //this is to make sure we dont return true for a false tune (A4D100)
+    return result;
+}
+
+int main()
+{
+    //test cases
+    assert(tuneValid("C4A5G4C2") == true);
+    assert(tuneValid("C4V4A5D6G9") == false);
+    assert(isValidNote("C4V4A5D6G9") == false);
+    assert(tuneValid("A5D2E11") == false);
+}
