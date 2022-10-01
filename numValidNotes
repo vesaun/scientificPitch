@@ -1,0 +1,79 @@
+//CSCI 1300 - Fall 2022
+//Author : Vesaun Shrestha
+//Recitation 106 - Chanheum Park
+//Project 1 - Problem 3
+
+#include <iostream>
+#include <string>
+#include <cassert>
+
+using namespace std;
+
+//from question 1
+bool isValid (string note) //bool int char
+{
+    if (note.length() != 2) //if the note is not two (e.g C45 or C)
+    {
+        return false;
+    }
+
+    //if the note is not A, B, C, D, E, F or G, then its automatically false
+    if (note[0] != 'A' && note[0] != 'B' && note[0] != 'C' && note[0] != 'D' && note[0] != 'E' && note[0] != 'F' &&note[0] != 'G')
+    {
+        return false;
+    }
+    //if the note has a pitch of less than 0 (-1) or greater than 9 then its automatically false
+    else if (!isdigit(note[1]))
+    {
+        return false;
+    }
+    else if ((int(note[1]) <= 0 && int(note[1]) > 9))
+    {
+        return false;
+    }
+
+    //these are the only conditions for the note to be true so if it meets each of these
+    //then its automatically true
+    else {
+        return true;
+    }
+}
+
+/**
+ * @brief iterate the entirety of the input length and check if it is a valid note at each 
+ * substring, if it is, count++
+ * 
+ * @param input 
+ * @return int 
+ */
+//function of return type integer with parameter input of type string
+int numValidNotes (string input)
+{
+    //this counter will be used in the return to return the desired answer
+    int count = 0;
+    //again, dist is set to 2 to set the substring length for each iteration
+    int dist = 2;
+    //iterate over the inputted string, checking every other spot as notes should only be 
+    //two characters long
+    for (int i = 0; i < input.length(); i++)
+    {
+        //if statement says if this note is valid then add one to the count
+        if (isValid(input.substr(i, dist)))
+        {
+            //this will keep track how many valid notes there are
+            count++;
+            //cout << input.substr(i, dist) << endl;
+        }
+    }
+
+    return count;
+}
+
+int main()
+{
+    //variety of test cases
+    assert(numValidNotes("C4A5D6G3B1F0") == 6);
+    assert(numValidNotes("ADB3M7G4F") == 2);
+    assert(numValidNotes("HC6MB1") == 2);
+    assert(numValidNotes("B0B0B0B0b0b0b0b0b0")  == 4);
+}
