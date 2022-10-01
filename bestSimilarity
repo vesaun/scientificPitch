@@ -1,0 +1,123 @@
+//CSCI 1300 - Fall 2022
+//Author : Vesaun Shrestha
+//Recitation 106 - Chanheum Park
+//Project 1 - Problem 5
+
+#include <iostream>
+#include <string>
+#include <cassert>
+
+using namespace std;
+
+//idk wtf this is
+bool doublesEqual(double a, double b, const double epsilon = 1e-2)
+{
+    double c = a - b;
+    return c < epsilon && -c < epsilon;
+}
+
+//from problem 5
+double similarity (string tune1, string tune2)
+{
+    double sameNote = 0;
+    double samePitchNote = 0;
+    double diffNote = 0;
+    double similarity;
+
+    int count = 0;
+    int dist = 2;
+
+    if (tune1.length() != tune2.length())
+    {
+        return 0;
+    }
+
+    for (int i = 0; i < tune1.length(); i += 2)
+    {
+        if (tune1.substr(i, dist) == tune2.substr(i ,dist))
+        {
+            samePitchNote++;
+            sameNote++;
+        }
+        else if (tune1[i] == tune2[i])
+        {
+            sameNote++;
+        }
+        else if (tune1[i] != tune2[i] && int(tune1[i+1]) != int(tune2[i+1])){
+            diffNote++;
+        }
+    }
+
+    /*cout << "Same pitchnotes " << samePitchNote << endl;
+    cout << "Same pitches " << sameNote << endl;
+    cout << "Different notes " << diffNote << endl;
+    */
+
+    double amountOfNotes = (tune1.length()) / 2;
+    similarity = (sameNote / amountOfNotes) + samePitchNote - diffNote;
+
+    //cout << "Amount of notes " << amountOfNotes << endl;
+    //cout << "Similarity is " << similarity << endl;
+    
+    return similarity;
+}
+
+/**
+ * @brief keep a tracker of very low magnitude to track the score, iterate through the 
+ * check the similarity of the substring starting from i of length targetTune.length
+ * and compared to targetTune and if it is higher than score tracker
+ * and not 0 then assign score tracker to similarity score
+ * 
+ * @param inputTune 
+ * @param targetTune 
+ * @return double 
+ */
+//function bestSimilarity of return type double with parameters inputTune and targetTune (string)
+double bestSimilarity(string inputTune, string targetTune)
+{
+    //this will keep track of the highest score
+    double high = -100000000000;
+
+    //if the target is bigger than the input, then automatically send 0
+    if(targetTune.length() > inputTune.length())
+    {
+        return 0;
+    }
+
+    //iterate over the input string, every other character
+    for (int i = 0; i < inputTune.length(); i += 2)
+    {   
+        //if the similarity of the substring from i and length target.length()
+        //has a greater value than high, then that value returned from similar() is now 
+        //high
+        if (similarity(inputTune.substr(i, targetTune.length()), targetTune) > high)
+        {
+            if (similarity(inputTune.substr(i, targetTune.length()), targetTune) != 0)
+            {
+                high = similarity(inputTune.substr(i, targetTune.length()), targetTune);
+            }
+            //cout << high << endl;
+        }
+    }
+
+    //simply return high, as it has been tracking the highest scores
+    return high;
+}
+
+int main()
+{
+    //test cases
+    /*cout << bestSimilarity("A0E2D4E5C1F0", "D4E5C0") << endl;
+    cout << bestSimilarity("E4D5B7G2E2", "D6G5G2") << endl;
+    cout << bestSimilarity("F1E2C2D1A7B8D3", "F2A7C3") << endl;
+    cout << bestSimilarity("A2G7", "E9D2C4F1") << endl;
+    */
+
+    assert(doublesEqual(bestSimilarity("F1E2C2D1A7B8D3", "F2A7C3"), -0.333333) == true);
+    assert(doublesEqual(bestSimilarity("A4D1", "A4B7"), 0.5) == true);
+    //cout << bestSimilarity("B8", "C8") << endl;
+    //cout << bestSimilarity("D3D4", "A7") << endl;
+
+    
+    return 0;
+}
