@@ -1,0 +1,106 @@
+//CSCI 1300 - Fall 2022
+//Author : Vesaun Shrestha
+//Recitation 106 - Chanheum Park
+//Project 1 - Problem 4
+
+#include <iostream>
+#include <string>
+#include <cassert>
+
+using namespace std;
+
+bool doublesEqual(double a, double b, const double epsilon = 1e-2)
+{
+    double c = a - b;
+    return c < epsilon && -c < epsilon;
+}
+/**
+ * @brief since tune1 and tune2 are same length, we use either tun1.length or tune2.length. 
+ * Iterate over, and check for certain conditions to add to certain double initialized under.
+ * Use the forumula given from github to calculate the similarity score.
+ * 
+ * @param tune1 
+ * @param tune2 
+ * @return double 
+ */
+
+//function of return type double with parameters tune1 a
+double tuneSimilarity (string tune1, string tune2)
+{
+    //these are doubles to make the math later easier
+    //amount of notes with same notes but not pitch
+    double sameNote = 0;
+    //amount of notes with same note AND pitch
+    double samePitchNote = 0;
+    //amount of different notes and pitches
+    double diffNote = 0;
+    //similarity to later be calculated/assigned
+    double similarity;
+
+    //using dist to set substring length for iterations
+    int dist = 2;
+
+    //if they aren't same length, automatically send 0
+    if (tune1.length() != tune2.length())
+    {
+        return 0;
+    }
+
+    //iterate over both strings, use either tune1 length or tune2 since same length
+    for (int i = 0; i < tune1.length(); i += 2)
+    {
+        //if the substring from i, dist (only one note) if the same as tune2 and tune1, then
+        //they are the same note and pitch, so add to samePitchnote and sameNote
+        if (tune1.substr(i, dist) == tune2.substr(i ,dist))
+        {
+            samePitchNote++;
+            sameNote++;
+        }
+        //otherwise, if only the note is the same (A4, A6), then only add to sameNote but not 
+        //pitch
+        else if (tune1[i] == tune2[i])
+        {
+            sameNote++;
+        }
+        //else, if the notes arent the same AND the pitches are off, then different notes
+        else if (tune1[i] != tune2[i] && int(tune1[i+1]) != int(tune2[i+1])){
+            diffNote++;
+        }
+    }
+
+    //DEBUGGING CODE
+    /*cout << "Same pitchnotes " << samePitchNote << endl;
+    cout << "Same pitches " << sameNote << endl;
+    cout << "Different notes " << diffNote << endl;
+    */
+    // calculate the amount of notes in either tune1 or tune2 by taking their length
+    //and dividing by 2
+    double amountOfNotes = (tune1.length()) / 2;
+    //calculate the similarity using the formula given in the problem question
+    similarity = (sameNote / amountOfNotes) + samePitchNote - diffNote;
+
+    //DEBUGGING CODE
+    //cout << "Amount of notes " << amountOfNotes << endl;
+    //cout << "Similarity is " << similarity << endl;
+    
+    return similarity;
+}
+
+int main()
+{    
+
+    //test cases since idk what doubleEqual is and how to use it
+    /*cout << tuneSimilarity("G4F4E4F4", "G3A4E4D3") << endl;
+    cout << tuneSimilarity("G4E5D4", "G4F4D5") << endl;
+    cout << tuneSimilarity("A0B0C0D0", "D1C1B1A1") << endl;
+    cout << tuneSimilarity("E5E5G5A6G5D5", "E5G5A6G5D5D5") << endl;
+    cout << tuneSimilarity("D5G2", "F7D1E4G4") << endl;
+    */
+
+    //cout << similarity("G4F4E4F4", "G3A4E4D3") << endl;
+
+    //assert(doublesEqual(tuneSimilarity("G4E5D4", "G4F4D5"), 0.666667) == true);
+    cout << tuneSimilarity("B8", "C8") << endl;
+    
+    return 0;
+}
