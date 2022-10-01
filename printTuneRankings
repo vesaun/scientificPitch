@@ -1,0 +1,185 @@
+//CSCI 1300 - Fall 2022
+//Author : Vesaun Shrestha
+//Recitation 106 - Chanheum Park
+//Project 1 - Problem 6
+
+#include <iostream>
+#include <string>
+#include <cassert>
+#include <array>
+
+using namespace std;
+
+bool doublesEqual(double a, double b, const double epsilon = 1e-2)
+{
+    double c = a - b;
+    return c < epsilon && -c < epsilon;
+}
+
+double tuneSimilarity (string tune1, string tune2)
+{
+    //these are doubles to make the math later easier
+    //amount of notes with same notes but not pitch
+    double sameNote = 0;
+    //amount of notes with same note AND pitch
+    double samePitchNote = 0;
+    //amount of different notes and pitches
+    double diffNote = 0;
+    //similarity to later be calculated/assigned
+    double similarity;
+
+    //using dist to set substring length for iterations
+    int dist = 2;
+
+    //if they aren't same length, automatically send 0
+    if (tune1.length() != tune2.length())
+    {
+        return 0;
+    }
+
+    //iterate over both strings, use either tune1 length or tune2 since same length
+    for (int i = 0; i < tune1.length(); i += 2)
+    {
+        //if the substring from i, dist (only one note) if the same as tune2 and tune1, then
+        //they are the same note and pitch, so add to samePitchnote and sameNote
+        if (tune1.substr(i, dist) == tune2.substr(i ,dist))
+        {
+            samePitchNote++;
+            sameNote++;
+        }
+        //otherwise, if only the note is the same (A4, A6), then only add to sameNote but not 
+        //pitch
+        else if (tune1[i] == tune2[i])
+        {
+            sameNote++;
+        }
+        //else, if the notes arent the same AND the pitches are off, then different notes
+        else if (tune1[i] != tune2[i] && int(tune1[i+1]) != int(tune2[i+1])){
+            diffNote++;
+        }
+    }
+
+    //DEBUGGING CODE
+    /*cout << "Same pitchnotes " << samePitchNote << endl;
+    cout << "Same pitches " << sameNote << endl;
+    cout << "Different notes " << diffNote << endl;
+    */
+    // calculate the amount of notes in either tune1 or tune2 by taking their length
+    //and dividing by 2
+    double amountOfNotes = (tune1.length()) / 2;
+    //calculate the similarity using the formula given in the problem question
+    similarity = (sameNote / amountOfNotes) + samePitchNote - diffNote;
+
+    //DEBUGGING CODE
+    //cout << "Amount of notes " << amountOfNotes << endl;
+    //cout << "Similarity is " << similarity << endl;
+    
+    return similarity;
+}
+
+double bestSimilarity(string inputTune, string targetTune)
+{
+    //this will keep track of the highest score
+    double high = -10000000;
+
+    //if the target is bigger than the input, then automatically send 0
+    if(targetTune.length() > inputTune.length())
+    {
+        return 0;
+    }
+
+    //iterate over the input string, every other character
+    for (int i = 0; i < inputTune.length(); i += 2)
+    {   
+        //if the similarity of the substring from i and length target.length()
+        //has a greater value than high, then that value returned from similar() is now 
+        //high
+        if (tuneSimilarity(inputTune.substr(i, targetTune.length()), targetTune) > high)
+        {
+            if (tuneSimilarity(inputTune.substr(i, targetTune.length()), targetTune) != 0)
+            {
+                high = tuneSimilarity(inputTune.substr(i, targetTune.length()), targetTune);
+            }
+            //cout << high << endl;
+        }
+    }
+
+    //simply return high, as it has been tracking the highest scores
+    return high;
+}
+
+/**
+ * @brief hardcode if and else if statements to cover all possibilities of 
+ * the rankings and print in that order
+ * 
+ * @param tune1 
+ * @param tune2 
+ * @param tune3 
+ * @param targetTune 
+ */
+void printTuneRankings(string tune1, string tune2, string tune3, string targetTune)
+{
+    double ranking1 = bestSimilarity(tune1, targetTune);
+    double ranking2 = bestSimilarity(tune2, targetTune);
+    double ranking3 = bestSimilarity(tune3, targetTune);
+    /*cout << ranking1 << endl;
+    cout << ranking2 << endl;
+    cout << ranking3 << endl;
+    */
+
+
+    //RANKING FOR 1
+    if (ranking1 == ranking2 && ranking1 == ranking3)
+    {
+        cout << "1) Tune 1, 2) Tune 2, 3) Tune 3" << endl;
+    }
+    else if (ranking1 >= ranking2 && ranking2 > ranking3)
+    {
+        cout << "1) Tune 1, 2) Tune 2, 3) Tune 3" << endl;
+    }
+    else if (ranking1 >= ranking3 && ranking3 > ranking2)
+    {
+        cout << "1) Tune 1, 2) Tune 3, 3) Tune 2" << endl;
+    }
+    else if (ranking1 == ranking2 && ranking1 < ranking3)
+    {
+        cout << "1) Tune 3, 2) Tune 1, 3) Tune 2" << endl;
+    }
+    else if (ranking1 > ranking2 && ranking2 == ranking3)
+    {
+        cout << "1) Tune 1, 2) Tune 2, 3) Tune 3" << endl;
+    }
+
+    //RANKING FOR 2
+    else if (ranking2 >= ranking1 && ranking1 > ranking3)
+    {
+        cout << "1) Tune 2, 2) Tune 1, 3) Tune 3" << endl;
+    }  
+    else if (ranking2 >= ranking3 && ranking3 > ranking1)
+    {
+        cout << "1) Tune 2, 2) Tune 3, 3) Tune 1" << endl;
+    }
+    else if (ranking2 > ranking1 && ranking1 == ranking3)
+    {
+        cout << "1) Tune 2, 2) Tune 1, 3) Tune 3" << endl;
+    }
+
+    //RANKING FOR 3
+    else if (ranking3 >= ranking1 && ranking1 > ranking2)
+    {
+        cout << "1) Tune 3, 2) Tune 1, 3) Tune 2" << endl;
+    }
+    else if (ranking3 >= ranking2 && ranking2 > ranking1)
+    {
+        cout << "1) Tune 3, 2) Tune 2, 3) Tune 1" << endl;
+    }
+        
+}
+
+int main()
+{
+    printTuneRankings("D3D4", "E3D4", "D3F4", "A7");
+    printTuneRankings("C2E7", "D4B3", "A4D1", "A4B7");
+    printTuneRankings("B8", "C8", "A7", "C8");
+    printTuneRankings("C0D9E3A5", "D7E2A4F9G1", "A8B1D4", "B7D5");
+}
